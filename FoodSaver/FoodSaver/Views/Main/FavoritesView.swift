@@ -1,10 +1,3 @@
-//
-//  FavoritesView.swift
-//  FoodSaver
-//  favorileri sunack
-//  Created by Kübra Nur Bayındır on 22.10.2024.
-//
-
 import SwiftUI
 
 struct FavoritesView: View {
@@ -13,7 +6,8 @@ struct FavoritesView: View {
     var body: some View {
         NavigationView {
             Group {
-                if recipeViewModel.favoritedRecipes.isEmpty {
+                if recipeViewModel.favoriteRecipes.isEmpty {
+                    // Favori tarif yoksa gösterilecek görünüm
                     VStack(spacing: 20) {
                         Image(systemName: "heart.slash")
                             .font(.system(size: 60))
@@ -29,8 +23,16 @@ struct FavoritesView: View {
                             .padding(.horizontal)
                     }
                 } else {
+                    // Favori tarifler varsa gösterilecek liste
                     ScrollView {
-                        RecipeList(recipes: recipeViewModel.favoritedRecipes)
+                        LazyVStack(spacing: 16) {
+                            ForEach(recipeViewModel.recipes.filter { recipeViewModel.favoriteRecipes.contains($0.id) }) { recipe in
+                                NavigationLink(destination: RecipeView(recipe: recipe)) {
+                                    RecipeCard(recipe: recipe)
+                                }
+                            }
+                        }
+                        .padding()
                     }
                 }
             }
@@ -44,4 +46,4 @@ struct FavoritesView_Previews: PreviewProvider {
         FavoritesView()
             .environmentObject(RecipeViewModel())
     }
-}
+} 

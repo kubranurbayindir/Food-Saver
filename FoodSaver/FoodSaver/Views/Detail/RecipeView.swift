@@ -35,10 +35,35 @@ struct RecipeView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     // Başlık ve Kategori
                     VStack(alignment: .center, spacing: 12) {
-                        Text(recipe.name)
-                            .font(.title)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .bold()
+                        HStack {
+                            Text(recipe.name)
+                                .font(.title)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .bold()
+                            
+                            Button(action: {
+                                showingEditSheet = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "pencil.circle.fill")
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
+                            
+                            // Favori kalp butonu
+                            Button(action: {
+                                recipeViewModel.toggleFavorite(for: recipe)
+                            }) {
+                                Image(systemName: recipeViewModel.isFavorite(recipe) ? "heart.fill" : "heart")
+                                    .foregroundColor(.red)
+                                    .font(.title2)
+                            }
+                            .padding(.leading, 4)
+                        }
                         
                         HStack(spacing: 8) {
                             Image(systemName: "tag.fill")
@@ -81,24 +106,6 @@ struct RecipeView: View {
         }
         .edgesIgnoringSafeArea(.top)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack {
-                    Button(action: {
-                        recipeViewModel.toggleFavorite(for: recipe)
-                    }) {
-                        Image(systemName: recipeViewModel.isFavorite(recipe) ? "heart.fill" : "heart")
-                            .foregroundColor(recipeViewModel.isFavorite(recipe) ? .red : .gray)
-                    }
-                    
-                    Button(action: {
-                        showingEditSheet = true
-                    }) {
-                        Image(systemName: "pencil")
-                    }
-                }
-            }
-        }
         .sheet(isPresented: $showingEditSheet) {
             EditRecipeView(recipe: recipe)
         }
@@ -112,4 +119,4 @@ struct RecipeView_Previews: PreviewProvider {
                 .environmentObject(RecipeViewModel())
         }
     }
-} 
+}

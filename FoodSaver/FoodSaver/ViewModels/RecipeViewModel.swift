@@ -35,34 +35,6 @@ class RecipeViewModel: ObservableObject {
         }
     }
     
-    private func loadFavorites() {
-        if let savedFavorites = UserDefaults.standard.array(forKey: "favoriteRecipes") as? [String] {
-            favoriteRecipes = Set(savedFavorites.compactMap { UUID(uuidString: $0) })
-        }
-    }
-    
-    private func saveFavorites() {
-        let favoriteIds = favoriteRecipes.map { $0.uuidString }
-        UserDefaults.standard.set(favoriteIds, forKey: "favoriteRecipes")
-    }
-    
-    func toggleFavorite(for recipe: Recipe) {
-        if favoriteRecipes.contains(recipe.id) {
-            favoriteRecipes.remove(recipe.id)
-        } else {
-            favoriteRecipes.insert(recipe.id)
-        }
-        saveFavorites()
-    }
-    
-    func isFavorite(_ recipe: Recipe) -> Bool {
-        favoriteRecipes.contains(recipe.id)
-    }
-    
-    var favoritedRecipes: [Recipe] {
-        recipes.filter { favoriteRecipes.contains($0.id) }
-    }
-    
     func addRecipe(name: String, category: Category, description: String, ingredients: String, directions: String, image: UIImage?) {
         // Resmi kaydet ve adını al
         let imageName = saveImage(image: image)
@@ -128,5 +100,33 @@ class RecipeViewModel: ObservableObject {
             recipes[index] = updatedRecipe
             saveRecipesToStorage()
         }
+    }
+    
+    private func loadFavorites() {
+        if let savedFavorites = UserDefaults.standard.array(forKey: "favoriteRecipes") as? [String] {
+            favoriteRecipes = Set(savedFavorites.compactMap { UUID(uuidString: $0) })
+        }
+    }
+    
+    private func saveFavorites() {
+        let favoriteIds = favoriteRecipes.map { $0.uuidString }
+        UserDefaults.standard.set(favoriteIds, forKey: "favoriteRecipes")
+    }
+    
+    func toggleFavorite(for recipe: Recipe) {
+        if favoriteRecipes.contains(recipe.id) {
+            favoriteRecipes.remove(recipe.id)
+        } else {
+            favoriteRecipes.insert(recipe.id)
+        }
+        saveFavorites()
+    }
+    
+    func isFavorite(_ recipe: Recipe) -> Bool {
+        favoriteRecipes.contains(recipe.id)
+    }
+    
+    var favoritedRecipes: [Recipe] {
+        recipes.filter { favoriteRecipes.contains($0.id) }
     }
 } 
